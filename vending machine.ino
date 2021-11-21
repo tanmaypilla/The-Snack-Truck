@@ -21,14 +21,14 @@ void loop() {
       digitalWrite(LED_BUILTIN, HIGH);
       myServo1.write(180);
       delay(3000); // can be changed to turn for longer
-
+      myServo1.write(90);
       break;
 
       case 'b':
       digitalWrite(LED_BUILTIN, HIGH);
       myServo2.write(180);
       delay(3000); // can be changed to turn for longer
-
+      myServo2.write(90);
       break;
 
       default : break;
