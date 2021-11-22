@@ -15,23 +15,25 @@ void setup() {
 
 void loop() {
   if(Serial.available()>0){
+    Serial.println("Wow");
+  }
+  if(Serial.available()>0){
     char data = Serial.read();
     switch(data){
-      case 'a':
+      case 'a':{
       digitalWrite(LED_BUILTIN, HIGH);
       myServo1.write(180);
       delay(3000); // can be changed to turn for longer
       myServo1.write(90);
       break;
-
-      case 'b':
+      }
+      case 'b':{
       digitalWrite(LED_BUILTIN, HIGH);
       myServo2.write(180);
       delay(3000); // can be changed to turn for longer
       myServo2.write(90);
       break;
-
-      default : break;
+      }
     }
     Serial.println(data);
   }
