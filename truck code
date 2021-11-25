@@ -1,26 +1,32 @@
 int vSpeed = 255;
 int turn_speed = 125;
-int turn_delay = 10;
+int turn_delay = 800;
   
 //L293 Connection
-const int motorA1 = 4; //right
-const int motorAspeed = 5;
-const int motorB1 = 7; //left
-const int motorBspeed = 6;
+const int rightMotor = 4;
+const int rightSpeed = 5;
+const int leftMotor = 7;
+const int leftSpeed = 6;
 
 //Sensor Connection
-const int left_sensor_pin = A0;
-const int right_sensor_pin = A1;
+const int frontSensor = A4;
+const int backSensor = A1;
+const int rightSensor = A3;
+const int leftSensor = A2;
 
-int left_sensor_state;
-int right_sensor_state;
+int target_x;
+int target_y;
+
+//currently not using back sensor
 
 void setup() {
-  pinMode(motorA1, OUTPUT);
-  pinMode(motorB1, OUTPUT);
+  pinMode(rightMotor, OUTPUT);
+  pinMode(leftMotor, OUTPUT);
 
-  pinMode (right_sensor_pin, INPUT);
-  pinMode (left_sensor_pin, INPUT);
+  pinMode (rightSensor, INPUT);
+  pinMode (leftSensor, INPUT);
+  pinMode (frontSensor, INPUT);
+  pinMode (backSensor, INPUT);
 
   Serial.begin(9600);
   delay(3000);
@@ -39,11 +45,11 @@ void setup() {
   if(right_sensor_state > 500 && left_sensor_state < 500) {
     Serial.println("turning right");
 
-    digitalWrite(motorA1, HIGH);                       
-    digitalWrite (motorB1, LOW);
+    digitalWrite(rightMotor, HIGH);                       
+    digitalWrite (leftMotor, LOW);
   
-    analogWrite (motorAspeed, turn_speed);
-    analogWrite (motorBspeed, vSpeed);
+    analogWrite (rightSpeed, turn_speed);
+    analogWrite (leftSpeed, vSpeed);
 
     delay (turn_delay);
   }
@@ -51,11 +57,11 @@ void setup() {
   if(right_sensor_state < 500 && left_sensor_state > 500) {
     Serial.println("turning left");
   
-    digitalWrite (motorA1, LOW);
-    digitalWrite (motorB1, HIGH);
+    digitalWrite (rightMotor, LOW);
+    digitalWrite (leftMotor, HIGH);
 
-    analogWrite (motorAspeed, vSpeed);
-    analogWrite (motorBspeed, turn_speed);
+    analogWrite (rightSpeed, vSpeed);
+    analogWrite (leftSpeed, turn_speed);
 
     delay(turn_delay);
   }
@@ -63,11 +69,11 @@ void setup() {
   if(right_sensor_state > 500 && left_sensor_state > 500) {
     Serial.println("going forward");
   
-    digitalWrite(motorA1, LOW);                       
-    digitalWrite(motorB1, LOW);
+    digitalWrite(rightMotor, LOW);                       
+    digitalWrite(leftMotor, LOW);
   
-    analogWrite (motorAspeed, vSpeed);
-    analogWrite (motorBspeed, vSpeed);
+    analogWrite (rightSpeed, vSpeed);
+    analogWrite (leftSpeed, vSpeed);
   
     delay(turn_delay);  
   }
@@ -75,72 +81,149 @@ void setup() {
   if(right_sensor_state < 500 && left_sensor_state < 500){ 
     Serial.println("stop");
     
-    analogWrite (motorAspeed, 0);
-    analogWrite (motorBspeed, 0);
+    analogWrite (rightSpeed, 0);
+    analogWrite (leftSpeed, 0);
   }
 }*/
 
-void loop() {
+/*void loop() {
   //forward
-  Serial.println("going forward");
+  Serial.println ("Forward");
+  digitalWrite(rightMotor, LOW);                       
+  digitalWrite(leftMotor, LOW);
 
-  digitalWrite(motorA1, LOW);                       
-  digitalWrite(motorB1, LOW);
+  analogWrite (rightSpeed, vSpeed);
+  analogWrite (leftSpeed, vSpeed);
+  delay (1000);
+  stop ();
 
-  analogWrite (motorAspeed, vSpeed);
-  analogWrite (motorBspeed, vSpeed);
+  delay (500);
 
-  delay(3000);
+  Serial.println ("Right");
+  turn_right_90 ();
 
-  //right
-  Serial.println("turning right");
-
-  digitalWrite(motorA1, HIGH);                       
-  digitalWrite (motorB1, LOW);
-
-  analogWrite (motorAspeed, turn_speed);
-  analogWrite (motorBspeed, vSpeed);
-
-  delay (3500);
+  delay (500);
 
   //forward
-  Serial.println("going forward");
+  Serial.println ("Forward");
+  digitalWrite(rightMotor, LOW);                       
+  digitalWrite(leftMotor, LOW);
 
-  digitalWrite(motorA1, LOW);                       
-  digitalWrite(motorB1, LOW);
+  analogWrite (rightSpeed, vSpeed);
+  analogWrite (leftSpeed, vSpeed);
+  delay (1000);
 
-  analogWrite (motorAspeed, vSpeed);
-  analogWrite (motorBspeed, vSpeed);
+  delay (500);
 
-  delay(3000);
+  Serial.println ("Left");
+  turn_left_90 ();
+
+  delay (500);
   
-  //left
-  Serial.println("turning left");
+  Serial.println ("Back");
+  back_up ();
 
-  digitalWrite (motorA1, LOW);
-  digitalWrite (motorB1, HIGH);
+  delay (500);
+}*/
 
-  analogWrite (motorAspeed, vSpeed);
-  analogWrite (motorBspeed, turn_speed);
-
-  delay(3500);
-
-  //forward
-  Serial.println("going forward");
-
-  digitalWrite(motorA1, LOW);                       
-  digitalWrite(motorB1, LOW);
-
-  analogWrite (motorAspeed, vSpeed);
-  analogWrite (motorBspeed, vSpeed);
-
-  delay(3000);
+/*void loop () {
+  while (analogRead (frontSensor) > 500) {
+    digitalWrite(rightMotor, LOW);                       
+    digitalWrite(leftMotor, LOW);
   
-  Serial.println("stop");
-  
-  analogWrite (motorAspeed, 0);
-  analogWrite (motorBspeed, 0);
+    analogWrite (rightSpeed, vSpeed);
+    analogWrite (leftSpeed, vSpeed);
 
+    delay (500);
+  }
+
+  outerloop:
+  while (true) {
+    if (!turn_right_90 ()) {
+      if (!turn_left_90 ()) {
+        back_up ();
+      } else {
+        break outerloop;
+      }
+    } else {
+      break;
+    }
+  }
+}*/
+
+/*void loop () {
+  Serial.println ("Backward");
+  for (int i = 0; i < 10; i++) {
+    digitalWrite (rightMotor, HIGH);
+    digitalWrite (leftMotor, LOW);
+    analogWrite (rightSpeed, 255);
+    analogWrite (leftSpeed, 0);
+    delay (500);
+    digitalWrite (leftMotor, HIGH);
+    digitalWrite (rightMotor, LOW);
+    analogWrite (leftSpeed, 255);
+    analogWrite (rightSpeed, 0);
+    delay (500);
+  }
+  Serial.println ("Stop");
+  stop ();
+  delay (1000);
+}*/
+
+void loop () {
+  digitalWrite (rightMotor, LOW);
+  digitalWrite (leftMotor, LOW);
+  analogWrite (leftSpeed, 255);
+  delay (1000);
+  analogWrite (leftSpeed, 0);
+  delay (1000);
+  digitalWrite (leftMotor, HIGH);
+  analogWrite (leftSpeed, 255);  
+  delay (1000);
+  analogWrite (leftSpeed, 0);
   delay (1000);
 }
 
+void turn_right_90 () {
+  /*if (analogRead (rightSensor) < 500) {
+    return false;
+  }*/
+
+  digitalWrite (rightMotor, HIGH);
+  digitalWrite (leftMotor, LOW);
+  analogWrite (rightSpeed, vSpeed);
+  analogWrite (leftSpeed, vSpeed);
+  delay (turn_delay);
+  stop ();
+
+  //return true;
+}
+
+void turn_left_90 () {
+  /*if (analogRead (leftSensor) < 500) {
+    return false;
+  }*/
+
+  digitalWrite (rightMotor, LOW);
+  digitalWrite (leftMotor, HIGH);
+  analogWrite (rightSpeed, vSpeed);
+  analogWrite (leftSpeed, vSpeed);
+  delay (turn_delay);
+  stop ();
+
+  //return true;
+}
+
+void back_up () {
+  digitalWrite (rightMotor, HIGH);
+  digitalWrite (leftMotor, HIGH);
+  analogWrite (rightSpeed, vSpeed);
+  analogWrite (leftSpeed, vSpeed);
+  delay (2000);
+  stop ();
+}
+
+void stop () {
+  analogWrite (rightSpeed, 0);
+  analogWrite (leftSpeed, 0);
+}
