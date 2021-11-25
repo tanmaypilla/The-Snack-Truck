@@ -1,6 +1,6 @@
 int vSpeed = 255;
 int turn_speed = 125;
-int turn_delay = 800;
+int turn_delay = 1200;
   
 //L293 Connection
 const int rightMotor = 4;
@@ -126,7 +126,8 @@ void setup() {
   delay (500);
 }*/
 
-/*void loop () {
+void loop () {
+  beginning:
   while (analogRead (frontSensor) > 500) {
     digitalWrite(rightMotor, LOW);                       
     digitalWrite(leftMotor, LOW);
@@ -134,22 +135,24 @@ void setup() {
     analogWrite (rightSpeed, vSpeed);
     analogWrite (leftSpeed, vSpeed);
 
-    delay (500);
+    delay (250);
+
+    analogWrite (rightSpeed, 0);
+    delay (5);
   }
 
-  outerloop:
   while (true) {
     if (!turn_right_90 ()) {
       if (!turn_left_90 ()) {
         back_up ();
       } else {
-        break outerloop;
+        goto beginning;
       }
     } else {
       break;
     }
   }
-}*/
+}
 
 /*void loop () {
   Serial.println ("Backward");
@@ -158,36 +161,22 @@ void setup() {
     digitalWrite (leftMotor, LOW);
     analogWrite (rightSpeed, 255);
     analogWrite (leftSpeed, 0);
-    delay (500);
+    delay (100);
     digitalWrite (leftMotor, HIGH);
     digitalWrite (rightMotor, LOW);
     analogWrite (leftSpeed, 255);
     analogWrite (rightSpeed, 0);
-    delay (500);
+    delay (100);
   }
   Serial.println ("Stop");
   stop ();
   delay (1000);
 }*/
 
-void loop () {
-  digitalWrite (rightMotor, LOW);
-  digitalWrite (leftMotor, LOW);
-  analogWrite (leftSpeed, 255);
-  delay (1000);
-  analogWrite (leftSpeed, 0);
-  delay (1000);
-  digitalWrite (leftMotor, HIGH);
-  analogWrite (leftSpeed, 255);  
-  delay (1000);
-  analogWrite (leftSpeed, 0);
-  delay (1000);
-}
-
-void turn_right_90 () {
-  /*if (analogRead (rightSensor) < 500) {
+boolean turn_right_90 () {
+  if (analogRead (rightSensor) < 500) {
     return false;
-  }*/
+  }
 
   digitalWrite (rightMotor, HIGH);
   digitalWrite (leftMotor, LOW);
@@ -196,13 +185,13 @@ void turn_right_90 () {
   delay (turn_delay);
   stop ();
 
-  //return true;
+  return true;
 }
 
-void turn_left_90 () {
-  /*if (analogRead (leftSensor) < 500) {
+boolean turn_left_90 () {
+  if (analogRead (leftSensor) < 500) {
     return false;
-  }*/
+  }
 
   digitalWrite (rightMotor, LOW);
   digitalWrite (leftMotor, HIGH);
@@ -211,15 +200,22 @@ void turn_left_90 () {
   delay (turn_delay);
   stop ();
 
-  //return true;
+  return true;
 }
 
 void back_up () {
-  digitalWrite (rightMotor, HIGH);
-  digitalWrite (leftMotor, HIGH);
-  analogWrite (rightSpeed, vSpeed);
-  analogWrite (leftSpeed, vSpeed);
-  delay (2000);
+  for (int i = 0; i < 10; i++) {
+    digitalWrite (rightMotor, HIGH);
+    digitalWrite (leftMotor, LOW);
+    analogWrite (rightSpeed, 255);
+    analogWrite (leftSpeed, 0);
+    delay (100);
+    digitalWrite (leftMotor, HIGH);
+    digitalWrite (rightMotor, LOW);
+    analogWrite (leftSpeed, 255);
+    analogWrite (rightSpeed, 0);
+    delay (100);
+  }
   stop ();
 }
 
